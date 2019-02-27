@@ -18,10 +18,24 @@ RUN \
     mkdir -p /opt && \
     cd /opt && \
     wget -q http://sourceforge.net/projects/geoserver/files/GeoServer/${VERSION}/geoserver-${VERSION}-bin.zip && \
-    unzip geoserver-${VERSION}-bin.zip && \
-    rm -f  geoserver-${VERSION}-bin.zip && \
-    mv ${GEOSERVER_HOME}/data_dir ${GEOSERVER_DATA_DIR} && \
-    chown -R geoserver ${GEOSERVER_HOME} ${GEOSERVER_DATA_DIR}
+    unzip -o geoserver-${VERSION}-bin.zip && \
+    rm -f geoserver-${VERSION}-bin.zip && \
+    mv ${GEOSERVER_HOME}/data_dir ${GEOSERVER_DATA_DIR}
+
+# Importer extension
+RUN wget -q http://sourceforge.net/projects/geoserver/files/GeoServer/${VERSION}/extensions/geoserver-${VERSION}-importer-plugin.zip &&\
+    unzip -o geoserver-${VERSION}-importer-plugin.zip -d ${GEOSERVER_HOME}/webapps/geoserver/WEB-INF/lib/ && \
+    rm -f geoserver-${VERSION}-importer-plugin.zip
+RUN wget -q http://sourceforge.net/projects/geoserver/files/GeoServer/${VERSION}/extensions/geoserver-${VERSION}-importer-bdb-plugin.zip &&\
+    unzip -o geoserver-${VERSION}-importer-bdb-plugin.zip -d ${GEOSERVER_HOME}/webapps/geoserver/WEB-INF/lib/ && \
+    rm -f geoserver-${VERSION}-importer-bdb-plugin.zip
+
+# Vector tiles extension
+RUN wget -q http://sourceforge.net/projects/geoserver/files/GeoServer/${VERSION}/extensions/geoserver-${VERSION}-vectortiles-plugin.zip &&\
+    unzip -o geoserver-${VERSION}-vectortiles-plugin.zip -d ${GEOSERVER_HOME}/webapps/geoserver/WEB-INF/lib/ && \
+    rm -f geoserver-${VERSION}-vectortiles-plugin.zip
+
+RUN chown -R geoserver ${GEOSERVER_HOME} ${GEOSERVER_DATA_DIR}
 
 # Run
 USER geoserver
