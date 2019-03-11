@@ -75,6 +75,7 @@ RUN /usr/pgsql-${PG_VERSION_MAJOR}/bin/pg_ctl -D ${POSTGRESQL_DATA_DIR} start &&
     sleep 5 && \
     psql --command "CREATE USER geoserver WITH SUPERUSER PASSWORD 'geoserver';" && \
     createdb -O geoserver geoserver && \
+    psql --dbname geoserver --command "CREATE EXTENSION postgis;" && \
     /usr/pgsql-${PG_VERSION_MAJOR}/bin/pg_ctl -D ${POSTGRESQL_DATA_DIR} stop
 
 USER root
