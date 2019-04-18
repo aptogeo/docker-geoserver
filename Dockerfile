@@ -3,8 +3,8 @@ FROM fedora:29
 LABEL maintainer="Aptogeo/Mathieu MAST"
 
 # Env variables
-ENV GEOSERVER_VERSION_MAJOR 2.14
-ENV GEOSERVER_VERSION_MINOR 2
+ENV GEOSERVER_VERSION_MAJOR 2.15
+ENV GEOSERVER_VERSION_MINOR 0
 ENV GEOSERVER_HOME /opt/geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}
 ENV GEOSERVER_DATA_DIR /opt/geoserver_data_dir
 ENV JAVA_HOME /etc/alternatives/jre
@@ -18,7 +18,7 @@ ENV POSTGRESQL_DATA_DIR /var/lib/pgsql/${PG_VERSION_MAJOR}/data
 RUN rpm --import https://yum.postgresql.org/RPM-GPG-KEY-PGDG-${PG_VERSION_MAJOR}
 
 # Add PostgreSQL's repository
-RUN dnf -y install https://download.postgresql.org/pub/repos/yum/${PG_VERSION_MAJOR}/fedora/fedora-29-x86_64/pgdg-fedora${PG_VERSION_MAJOR}-${PG_VERSION_MAJOR}-${PG_VERSION_MINOR}.noarch.rpm
+RUN dnf -y install https://download.postgresql.org/pub/repos/yum/${PG_VERSION_MAJOR}/fedora/fedora-29-x86_64/pgdg-fedora-repo-latest.noarch.rpm
 
 # Update repository metadata
 RUN dnf -y install deltarpm
@@ -50,13 +50,10 @@ RUN wget -q http://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVE
     unzip -o geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}-vectortiles-plugin.zip -d ${GEOSERVER_HOME}/webapps/geoserver/WEB-INF/lib/ && \
     rm -f geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}-vectortiles-plugin.zip
 
-# SpatiaLite extension
-RUN dnf install -y sqlite sqlite-devel libspatialite proj proj-epsg
-RUN ln -s /usr/lib64/libproj.so.12 /usr/lib64/libproj.so.0
-RUN wget -q https://build.geoserver.org/geoserver/${GEOSERVER_VERSION_MAJOR}.x/community-latest/geoserver-${GEOSERVER_VERSION_MAJOR}-SNAPSHOT-spatialite-plugin.zip  &&\
-    unzip -o geoserver-${GEOSERVER_VERSION_MAJOR}-SNAPSHOT-spatialite-plugin.zip -d ${GEOSERVER_HOME}/webapps/geoserver/WEB-INF/lib/ && \
-    rm -f geoserver-${GEOSERVER_VERSION_MAJOR}-SNAPSHOT-spatialite-plugin.zip
-
+# Mapbox style extension
+RUN wget -q https://build.geoserver.org/geoserver/${GEOSERVER_VERSION_MAJOR}.x/community-latest/geoserver-${GEOSERVER_VERSION_MAJOR}-SNAPSHOT-mbstyle-plugin.zip &&\
+    unzip -o geoserver-${GEOSERVER_VERSION_MAJOR}-SNAPSHOT-mbstyle-plugin.zip -d ${GEOSERVER_HOME}/webapps/geoserver/WEB-INF/lib/ && \
+    rm -f geoserver-${GEOSERVER_VERSION_MAJOR}-SNAPSHOT-mbstyle-plugin.zip
 
 RUN chown -R geoserver ${GEOSERVER_HOME} ${GEOSERVER_DATA_DIR}
 
