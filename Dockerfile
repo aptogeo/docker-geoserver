@@ -1,16 +1,16 @@
-FROM fedora:29
+FROM fedora:30
 
-LABEL maintainer="Aptogeo/Mathieu MAST"
+LABEL maintainer="AptoGéo/Mathieu MAST"
 
 # Env variables
 ENV GEOSERVER_VERSION_MAJOR 2.15
-ENV GEOSERVER_VERSION_MINOR 0
+ENV GEOSERVER_VERSION_MINOR 1
 ENV GEOSERVER_HOME /opt/geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}
 ENV GEOSERVER_DATA_DIR /opt/geoserver_data_dir
 ENV JAVA_HOME /etc/alternatives/jre
 ENV JAVA_OPTS="-Xms512m -Xmx2048m"
 ENV PG_VERSION_MAJOR 11
-ENV PG_VERSION_MINOR 2
+ENV PG_VERSION_MINOR 3
 ENV PGIS_VERSION 25_${PG_VERSION_MAJOR}
 ENV POSTGRESQL_DATA_DIR /var/lib/pgsql/${PG_VERSION_MAJOR}/data
 
@@ -20,12 +20,8 @@ RUN rpm --import https://yum.postgresql.org/RPM-GPG-KEY-PGDG-${PG_VERSION_MAJOR}
 # Add PostgreSQL's repository
 RUN dnf -y install https://download.postgresql.org/pub/repos/yum/${PG_VERSION_MAJOR}/fedora/fedora-29-x86_64/pgdg-fedora-repo-latest.noarch.rpm
 
-# Update repository metadata
-RUN dnf -y install deltarpm
-RUN dnf -y update
-
-# Bases packages
-RUN dnf install -y wget java-1.8.0-openjdk unzip postgresql${PG_VERSION_MAJOR}-server postgresql${PG_VERSION_MAJOR}-contrib procps-ng net-tools postgis${PGIS_VERSION} postgis${PGIS_VERSION}-client
+# Packages
+RUN dnf -y update && dnf install -y wget java-1.8.0-openjdk unzip postgresql${PG_VERSION_MAJOR}-server postgresql${PG_VERSION_MAJOR}-contrib procps-ng net-tools postgis${PGIS_VERSION} postgis${PGIS_VERSION}-client
 
 # Add GeoServer
 RUN \
