@@ -5,6 +5,7 @@
 - GeoServer
 - Importer extension
 - Vector tiles extension
+- WPS extension
 
 ## Build
 ```sh
