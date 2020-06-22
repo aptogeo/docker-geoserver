@@ -4,14 +4,14 @@ LABEL maintainer="AptoGéo/Mathieu MAST"
 
 # Env variables
 ENV GEOSERVER_VERSION_MAJOR 2.17
-ENV GEOSERVER_VERSION_MINOR 0
+ENV GEOSERVER_VERSION_MINOR 1
 ENV GEOSERVER_HOME /opt/geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}
 ENV GEOSERVER_DATA_DIR /opt/geoserver_data_dir
 ENV JAVA_HOME /etc/alternatives/jre
 ENV JAVA_OPTS="-Xms512m -Xmx2048m"
 
 # Packages
-RUN dnf install -y wget java-1.8.0-openjdk unzip procps-ng net-tools
+RUN dnf install -y java-1.8.0-openjdk unzip procps-ng net-tools ftp wget wput curl passwd
 
 # Add GeoServer
 RUN \
