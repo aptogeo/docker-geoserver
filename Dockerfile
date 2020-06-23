@@ -15,7 +15,6 @@ RUN dnf install -y java-1.8.0-openjdk unzip procps-ng net-tools ftp wget wput cu
 
 # Add GeoServer
 RUN \
-    useradd -d ${GEOSERVER_HOME} -m -s /bin/bash geoserver && \
     mkdir -p /opt && \
     cd /opt && \
     wget -q http://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}/geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}-bin.zip && \
@@ -46,11 +45,8 @@ RUN wget -q http://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVE
     unzip -o geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}-wps-plugin.zip -d ${GEOSERVER_HOME}/webapps/geoserver/WEB-INF/lib/ && \
     rm -f geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}-wps-plugin.zip
 
-RUN chown -R geoserver ${GEOSERVER_HOME}
-RUN chown -R geoserver ${GEOSERVER_DATA_DIR}
-
 USER root
 EXPOSE 8080
 VOLUME ${GEOSERVER_DATA_DIR}
 WORKDIR ${GEOSERVER_HOME}
-CMD su - geoserver -c "JAVA_HOME=${JAVA_HOME} GEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR} ${GEOSERVER_HOME}/bin/startup.sh"
+CMD ${GEOSERVER_HOME}/bin/startup.sh
