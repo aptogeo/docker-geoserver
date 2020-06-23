@@ -46,10 +46,11 @@ RUN wget -q http://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVE
     unzip -o geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}-wps-plugin.zip -d ${GEOSERVER_HOME}/webapps/geoserver/WEB-INF/lib/ && \
     rm -f geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}-wps-plugin.zip
 
-RUN chown -R geoserver ${GEOSERVER_HOME} ${GEOSERVER_DATA_DIR}
+RUN chown -R geoserver ${GEOSERVER_HOME}
+RUN chown -R geoserver ${GEOSERVER_DATA_DIR}
 
 USER root
 EXPOSE 8080
 VOLUME ${GEOSERVER_DATA_DIR}
 WORKDIR ${GEOSERVER_HOME}
-CMD su - geoserver -c "JAVA_HOME=${JAVA_HOME} GEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR} ${GEOSERVER_HOME}/bin/startup.sh"
+CMD su - geoserver -c "${GEOSERVER_HOME}/bin/startup.sh"
