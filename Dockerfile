@@ -8,6 +8,7 @@ ENV GEOSERVER_VERSION_MINOR 1
 ENV GEOSERVER_HOME /opt/geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}
 ENV GEOSERVER_DATA_DIR /opt/geoserver_data_dir
 ENV GEOSERVER_CSRF_DISABLED false
+ENV GEOSERVER_PATH geoserver
 ENV JAVA_HOME /etc/alternatives/jre
 ENV JAVA_OPTS="-Xms512m -Xmx2048m"
 
@@ -46,8 +47,11 @@ RUN wget -q http://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVE
     unzip -o geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}-wps-plugin.zip -d ${GEOSERVER_HOME}/webapps/geoserver/WEB-INF/lib/ && \
     rm -f geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}-wps-plugin.zip
 
+# Move GeoServer app
+RUN mv ${GEOSERVER_HOME}/webapps/ ${GEOSERVER_HOME}/savwebapps/
+
 USER root
 EXPOSE 8080
 VOLUME ${GEOSERVER_DATA_DIR}
 WORKDIR ${GEOSERVER_HOME}
-CMD ${GEOSERVER_HOME}/bin/startup.sh
+CMD rm -rf ${GEOSERVER_HOME}/webapps/ && mkdir ${GEOSERVER_HOME}/webapps/ && cp -r ${GEOSERVER_HOME}/savwebapps/geoserver/ ${GEOSERVER_HOME}/webapps/${GEOSERVER_PATH}/ && ${GEOSERVER_HOME}/bin/startup.sh
