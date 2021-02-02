@@ -1,10 +1,10 @@
-FROM fedora:31
+FROM fedora:33
 
 LABEL maintainer="AptoGéo/Mathieu MAST"
 
 # Env variables
-ENV GEOSERVER_VERSION_MAJOR 2.17
-ENV GEOSERVER_VERSION_MINOR 1
+ENV GEOSERVER_VERSION_MAJOR 2.18
+ENV GEOSERVER_VERSION_MINOR 2
 ENV GEOSERVER_HOME /opt/geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}
 ENV GEOSERVER_DATA_DIR /opt/geoserver_data_dir
 ENV GEOSERVER_CSRF_DISABLED false
@@ -13,7 +13,7 @@ ENV JAVA_HOME /etc/alternatives/jre
 ENV JAVA_OPTS="-Xms512m -Xmx2048m"
 
 # Packages
-RUN dnf install -y java-1.8.0-openjdk unzip procps-ng net-tools ftp wget wput curl passwd
+RUN dnf install -y java-11-openjdk unzip procps-ng net-tools ftp wget wput curl passwd
 
 # Add GeoServer
 RUN \
