@@ -3,10 +3,8 @@
 ## Included
 
 - GeoServer
-- Importer extension
 - Vector tiles extension
 - Mapbox style extension
-- WPS extension
 
 ## Build
 ```sh
