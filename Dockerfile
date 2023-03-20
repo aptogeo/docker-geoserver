@@ -11,6 +11,9 @@ ENV GEOSERVER_CSRF_DISABLED false
 ENV GEOSERVER_PATH geoserver
 ENV JAVA_OPTS="-Xms512m -Xmx2048m"
 
+# Volumes
+VOLUME ${GEOSERVER_DATA_DIR}
+
 # Packages
 RUN apt-get update && apt-get install unzip
 
@@ -38,6 +41,5 @@ RUN mv ${GEOSERVER_HOME}/webapps/ ${GEOSERVER_HOME}/savwebapps/
 
 # USER root
 EXPOSE 8080
-VOLUME ${GEOSERVER_DATA_DIR}
 WORKDIR ${GEOSERVER_HOME}
 CMD rm -rf ${GEOSERVER_HOME}/webapps/ && mkdir ${GEOSERVER_HOME}/webapps/ && cp -r ${GEOSERVER_HOME}/savwebapps/geoserver/ ${GEOSERVER_HOME}/webapps/${GEOSERVER_PATH}/ && export GEOSERVER_CSRF_DISABLED=true && ${GEOSERVER_HOME}/bin/startup.sh
