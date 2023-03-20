@@ -40,4 +40,4 @@ RUN mv ${GEOSERVER_HOME}/webapps/ ${GEOSERVER_HOME}/savwebapps/
 EXPOSE 8080
 VOLUME ${GEOSERVER_DATA_DIR}
 WORKDIR ${GEOSERVER_HOME}
-CMD rm -rf ${GEOSERVER_HOME}/webapps/ && mkdir ${GEOSERVER_HOME}/webapps/ && cp -r ${GEOSERVER_HOME}/savwebapps/geoserver/ ${GEOSERVER_HOME}/webapps/${GEOSERVER_PATH}/ && ${GEOSERVER_HOME}/bin/startup.sh
+CMD rm -rf ${GEOSERVER_HOME}/webapps/ && mkdir ${GEOSERVER_HOME}/webapps/ && cp -r ${GEOSERVER_HOME}/savwebapps/geoserver/ ${GEOSERVER_HOME}/webapps/${GEOSERVER_PATH}/ && export GEOSERVER_CSRF_DISABLED=true && ${GEOSERVER_HOME}/bin/startup.sh
