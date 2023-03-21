@@ -9,7 +9,9 @@ ENV GEOSERVER_HOME /opt/geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION
 ENV GEOSERVER_DATA_DIR /opt/geoserver_data_dir
 ENV GEOSERVER_CSRF_DISABLED false
 ENV GEOSERVER_PATH geoserver
-ENV JAVA_OPTS="-Xms512m -Xmx2048m"
+ENV HTTP_PORT=8080
+ENV XMS=256m
+ENV XMX=1024m
 
 # Volumes
 VOLUME ${GEOSERVER_DATA_DIR}
@@ -39,6 +41,6 @@ RUN wget -q http://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVE
 RUN mv ${GEOSERVER_HOME}/webapps/ ${GEOSERVER_HOME}/savwebapps/
 
 # USER root
-EXPOSE 8080
+EXPOSE ${HTTP_PORT}
 WORKDIR ${GEOSERVER_HOME}
-CMD (test -d ${GEOSERVER_DATA_DIR} && test -d ${GEOSERVER_DATA_DIR}/security && true || cp -rf ${GEOSERVER_HOME}/data_dir/* ${GEOSERVER_DATA_DIR}) && rm -rf ${GEOSERVER_HOME}/webapps/ && mkdir ${GEOSERVER_HOME}/webapps/ && cp -r ${GEOSERVER_HOME}/savwebapps/geoserver/ ${GEOSERVER_HOME}/webapps/${GEOSERVER_PATH}/ && export GEOSERVER_CSRF_DISABLED=true && ${GEOSERVER_HOME}/bin/startup.sh
+CMD (test -d ${GEOSERVER_DATA_DIR} && test -d ${GEOSERVER_DATA_DIR}/security && true || cp -rf ${GEOSERVER_HOME}/data_dir/* ${GEOSERVER_DATA_DIR}) && rm -rf ${GEOSERVER_HOME}/webapps/ && mkdir ${GEOSERVER_HOME}/webapps/ && cp -r ${GEOSERVER_HOME}/savwebapps/geoserver/ ${GEOSERVER_HOME}/webapps/${GEOSERVER_PATH}/ && sed -i "s/^jetty.http.port=.*$/jetty.http.port=${HTTP_PORT}/g" ${GEOSERVER_HOME}/start.ini && ${GEOSERVER_HOME}/bin/startup.sh
