@@ -6,7 +6,7 @@ LABEL maintainer="AptoGéo/Mathieu MAST"
 ARG GEOSERVER_VERSION_MAJOR=2.22
 ARG GEOSERVER_VERSION_MINOR=2
 ARG GEOSERVER_HOME=/opt/geoserver
-ARG GEOSERVER_DATA_DIR=/opt/geoserver_data_dir
+ENV GEOSERVER_DATA_DIR=/opt/geoserver_data_dir
 ENV GEOSERVER_CSRF_DISABLED false
 ENV HTTP_PORT=8080
 ENV XMS=256m
@@ -48,4 +48,4 @@ RUN chown -Rf geoserver:geoserver $GEOSERVER_DATA_DIR
 USER 1000:1000
 EXPOSE ${HTTP_PORT}
 WORKDIR $GEOSERVER_HOME
-CMD (test -d /opt/geoserver_data_dir/security && true || cp -rf /opt/geoserver/data_dir/* /opt/geoserver_data_dir) && sed -i "s/^jetty.http.port=.*$/jetty.http.port=${HTTP_PORT}/g" /opt/geoserver/start.ini && /opt/geoserver/bin/startup.sh
+CMD (test -d $GEOSERVER_DATA_DIR/security && true || cp -rf /opt/geoserver/data_dir/* $GEOSERVER_DATA_DIR) && sed -i "s/^jetty.http.port=.*$/jetty.http.port=${HTTP_PORT}/g" /opt/geoserver/start.ini && /opt/geoserver/bin/startup.sh
