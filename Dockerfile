@@ -5,11 +5,16 @@ LABEL maintainer="AptoGéo/Mathieu MAST"
 # Env variables
 ENV GEOSERVER_VERSION_MAJOR 2.23
 ENV GEOSERVER_VERSION_MINOR 1
-ENV GEOSERVER_HOME /opt/geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}
+ENV GEOSERVER_HOME /opt/geoserver
 ENV GEOSERVER_DATA_DIR /opt/geoserver_data_dir
 ENV GEOSERVER_CSRF_DISABLED true
-ENV GEOSERVER_PATH geoserver
-ENV JAVA_OPTS="-Xms512m -Xmx2048m -XX:SoftRefLRUPolicyMSPerMB=36000 -XX:+UseParallelGC -DGEOSERVER_CSRF_DISABLED=${GEOSERVER_CSRF_DISABLED} -Xbootclasspath/a:/opt/marlin-0.9.4.7-Unsafe-OpenJDK11.jar -Dsun.java2d.renderer=org.marlin.pisces.MarlinRenderingEngine"
+ENV HTTP_PORT 8080
+ENV XMS 256m
+ENV XMX 1024m
+ENV JAVA_OPTS "-Xms${XMS} -Xmx${XMX} -XX:SoftRefLRUPolicyMSPerMB=36000 -XX:+UseParallelGC -DGEOSERVER_CSRF_DISABLED=${GEOSERVER_CSRF_DISABLED} -Xbootclasspath/a:/opt/marlin-0.9.4.7-Unsafe-OpenJDK11.jar -Dsun.java2d.renderer=org.marlin.pisces.MarlinRenderingEngine"
+
+# Volumes
+VOLUME $GEOSERVER_DATA_DIR
 
 # Packages
 RUN apt-get update && apt-get install unzip
@@ -38,13 +43,15 @@ RUN wget -q https://build.geoserver.org/geoserver/${GEOSERVER_VERSION_MAJOR}.x/c
     unzip -o geoserver-${GEOSERVER_VERSION_MAJOR}-SNAPSHOT-jms-cluster-plugin.zip -d ${GEOSERVER_HOME}/webapps/geoserver/WEB-INF/lib/ && \
     rm -f geoserver-${GEOSERVER_VERSION_MAJOR}-SNAPSHOT-jms-cluster-plugin.zip
 
-ADD web.xml /opt/geoserver-${GEOSERVER_VERSION_MAJOR}.${GEOSERVER_VERSION_MINOR}/webapps/geoserver/WEB-INF/web.xml
+ADD web.xml /opt/geoserver/webapps/geoserver/WEB-INF/web.xml
 
-# Move GeoServer app
-RUN mv ${GEOSERVER_HOME}/webapps/ ${GEOSERVER_HOME}/savwebapps/
+# Define user geoserver
+RUN groupadd --system -g 1000 geoserver
+RUN useradd --system --gid geoserver --no-create-home --home-dir $GEOSERVER_DATA_DIR --shell /use/sbin/nologin --uid 1000 geoserver
+RUN chown -Rf geoserver:geoserver $GEOSERVER_HOME
+RUN chown -Rf geoserver:geoserver $GEOSERVER_DATA_DIR
 
-# USER root
-EXPOSE 8080
-VOLUME ${GEOSERVER_DATA_DIR}
-WORKDIR ${GEOSERVER_HOME}
-CMD rm -rf ${GEOSERVER_HOME}/webapps/ && mkdir ${GEOSERVER_HOME}/webapps/ && cp -r ${GEOSERVER_HOME}/savwebapps/geoserver/ ${GEOSERVER_HOME}/webapps/${GEOSERVER_PATH}/ && ${GEOSERVER_HOME}/bin/startup.sh
+USER 1000:1000
+EXPOSE ${HTTP_PORT}
+WORKDIR $GEOSERVER_HOME
+CMD (test -d $GEOSERVER_DATA_DIR/security && true || cp -rf /opt/geoserver/data_dir/* $GEOSERVER_DATA_DIR) && sed -i "s/^jetty.http.port=.*$/jetty.http.port=${HTTP_PORT}/g" /opt/geoserver/start.ini && /opt/geoserver/bin/startup.sh
